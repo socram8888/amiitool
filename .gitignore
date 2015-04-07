@@ -1,0 +1,12 @@
+# Ignore gedit backups
+*~
+
+# Ignore hidden files, except for gitignore
+.*
+!.gitignore
+
+# Ignore binaries
+/build
+
+# Ignore copyrighted files
+/src/ninkeys.c
