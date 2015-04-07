@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-#include "drbg.h"
+#include "nfc3d/drbg.h"
 #include <assert.h>
 #include <string.h>
 #include <openssl/evp.h>

@@ -1,5 +1,5 @@
 
-#include "keygen.h"
+#include "nfc3d/keygen.h"
 #include <stdio.h>
 
 void printhex(void * byteVoid, size_t size) {

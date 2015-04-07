@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 2.8.4)
 project(nfc3d)
 
-include_directories("include")
+include_directories(include)
 
 set(HEADER_FILES
-	include/drbg.h
-	include/keygen.h
-	include/ninkeys.h
+	include/nfc3d/drbg.h
+	include/nfc3d/keygen.h
+	include/nfc3d/ninkeys.h
 )
 
 set(LIB_FILES

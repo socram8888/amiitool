@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 
-#include "drbg.h"
-#include "keygen.h"
+#include "nfc3d/drbg.h"
+#include "nfc3d/keygen.h"
 #include <assert.h>
 
 void nfc3d_keygen_prepare_seed(const nfc3d_keygen_masterkeys * baseKeys, const uint8_t * baseSeed, uint8_t * output, size_t * outputSize) {
