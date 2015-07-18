@@ -25,11 +25,10 @@
 
 #include "keygen.h"
 
-extern const nfc3d_keygen_masterkeys * NFC3D_NINKEYS_RETAIL_LOCKED_SECRET_KEYS;
-extern const nfc3d_keygen_masterkeys * NFC3D_NINKEYS_RETAIL_UNFIXED_INFOS_KEYS;
+extern const nfc3d_keygen_masterkeys NFC3D_NINKEYS_RETAIL_UNFIXED_INFOS;
+extern const nfc3d_keygen_masterkeys NFC3D_NINKEYS_RETAIL_LOCKED_SECRET;
 
-extern const nfc3d_keygen_masterkeys * NFC3D_NINKEYS_DEBUG_LOCKED_SECRET_KEYS;
-extern const nfc3d_keygen_masterkeys * NFC3D_NINKEYS_DEBUG_UNFIXED_INFOS_KEYS;
+extern const nfc3d_keygen_masterkeys NFC3D_NINKEYS_DEBUG_UNFIXED_INFOS;
+extern const nfc3d_keygen_masterkeys NFC3D_NINKEYS_DEBUG_LOCKED_SECRET;
 
 #endif
-

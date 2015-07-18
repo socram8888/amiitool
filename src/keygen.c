@@ -60,11 +60,10 @@ void nfc3d_keygen_prepare_seed(const nfc3d_keygen_masterkeys * baseKeys, const u
 	*outputSize = output - start;
 }
 
-void nfc3d_keygen(const nfc3d_keygen_masterkeys * baseKeys, const uint8_t * baseSeed, uint8_t * derivatedKeys) {
+void nfc3d_keygen(const nfc3d_keygen_masterkeys * baseKeys, const uint8_t * baseSeed, nfc3d_keygen_derivedkeys * derivedKeys) {
 	uint8_t preparedSeed[NFC3D_DRBG_MAX_SEED_SIZE];
 	size_t preparedSeedSize;
 
 	nfc3d_keygen_prepare_seed(baseKeys, baseSeed, preparedSeed, &preparedSeedSize);
-	nfc3d_drbg_generate_bytes(baseKeys->hmacKey, NFC3D_KEYGEN_HMAC_SIZE, preparedSeed, preparedSeedSize, derivatedKeys, 48);
+	nfc3d_drbg_generate_bytes(baseKeys->hmacKey, NFC3D_KEYGEN_HMAC_SIZE, preparedSeed, preparedSeedSize, (uint8_t *) derivedKeys, sizeof(*derivedKeys));
 }
-

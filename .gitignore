@@ -10,3 +10,4 @@
 
 # Ignore copyrighted files
 /src/ninkeys.c
+/src/nintest.c
