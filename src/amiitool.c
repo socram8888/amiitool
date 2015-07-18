@@ -82,29 +82,24 @@ int main(int argc, char ** argv) {
 		}
 	}
 
-	if (op == '\0' || infile == NULL || outfile == NULL) {
+	if (op == '\0') {
 		usage();
 		return 1;
 	}
 
-	printf("%s file \"%s\" to \"%s\" using %s \"%s\" keys\n",
-			op == 'e' ? "Encrypting" : "Decrypting",
-			infile,
-			outfile,
-			debug ? "debug" : "retail",
-			locked ? "locked secret" : "unfixed infos"
-	);
-
 	uint8_t original[NFC3D_AMIIBO_SIZE];
 	uint8_t modified[NFC3D_AMIIBO_SIZE];
 
-	FILE * f = fopen(infile, "rb");
-	if (!f) {
-		fprintf(stderr, "Could not open input file: %s (%d)\n", strerror(errno), errno);
-		return 3;
+	FILE * f = stdin;
+	if (infile) {
+		f = fopen(infile, "rb");
+		if (!f) {
+			fprintf(stderr, "Could not open input file: %s (%d)\n", strerror(errno), errno);
+			return 3;
+		}
 	}
 	if (fread(original, NFC3D_AMIIBO_SIZE, 1, f) != 1) {
-		fprintf(stderr, "Could not read from input file: %s (%d)\n", strerror(errno), errno);
+		fprintf(stderr, "Could not read from input: %s (%d)\n", strerror(errno), errno);
 		return 3;
 	}
 	fclose(f);
@@ -118,14 +113,17 @@ int main(int argc, char ** argv) {
 		}
 	}
 
-	f = fopen(outfile, "wb");
-	if (!f) {
-		fprintf(stderr, "Could not open output file: %s (%d)\n", strerror(errno), errno);
-		return 3;
+	f = stdout;
+	if (outfile) {
+		f = fopen(outfile, "wb");
+		if (!f) {
+			fprintf(stderr, "Could not open output file: %s (%d)\n", strerror(errno), errno);
+			return 4;
+		}
 	}
 	if (fwrite(modified, NFC3D_AMIIBO_SIZE, 1, f) != 1) {
-		fprintf(stderr, "Could not write to output file: %s (%d)\n", strerror(errno), errno);
-		return 3;
+		fprintf(stderr, "Could not write to output: %s (%d)\n", strerror(errno), errno);
+		return 4;
 	}
 	fclose(f);
 
