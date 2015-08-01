@@ -20,7 +20,6 @@
  * THE SOFTWARE.
  */
 
-#include "nfc3d/ninkeys.h"
 #include "nfc3d/amiibo.h"
 #include "util.h"
 #include <stdio.h>
@@ -28,37 +27,30 @@
 #include <getopt.h>
 #include <errno.h>
 
-const nfc3d_keygen_masterkeys * KEYS[4] = {
-	&NFC3D_NINKEYS_RETAIL_UNFIXED_INFOS,
-	&NFC3D_NINKEYS_RETAIL_LOCKED_SECRET,
-	&NFC3D_NINKEYS_DEBUG_UNFIXED_INFOS,
-	&NFC3D_NINKEYS_DEBUG_LOCKED_SECRET
-};
-
 void usage() {
 	fprintf(stderr,
 		"amiitool\n"
 		"by Marcos Vives Del Sol <socram@protonmail.ch>\n"
 		"\n"
-		"Usage: amiitool [-edtl] -i input -o output\n"
-		"   -e encrypt amiibo\n"
-		"   -d decrypt amiibo\n"
-		"   -i input file\n"
-		"   -o output file\n"
-		"   -t use test (debug) keys instead of retail\n"
-		"   -l use \"locked secret\" keys\n"
+		"Usage: amiitool (-e|-d) -k keyfile [-i input] [-o output]\n"
+		"   -e encrypt and sign amiibo\n"
+		"   -d decrypt and test amiibo\n"
+		"   -k key set file. For retail amiibo, use \"retail unfixed\" key set\n"
+		"   -i input file. If not specified, stdin will be used.\n"
+		"   -o output file. If not specified, stdout will be used.\n"
 	);
 }
 
 int main(int argc, char ** argv) {
 	char * infile = NULL;
 	char * outfile = NULL;
+	char * keyfile = NULL;
 	char op = '\0';
 	bool debug = false;
 	bool locked = false;
 
 	char c;
-	while ((c = getopt(argc, argv, "edi:o:tl")) != -1) {
+	while ((c = getopt(argc, argv, "edi:o:k:")) != -1) {
 		switch (c) {
 			case 'e':
 			case 'd':
@@ -70,11 +62,8 @@ int main(int argc, char ** argv) {
 			case 'o':
 				outfile = optarg;
 				break;
-			case 't':
-				debug = true;
-				break;
-			case 'l':
-				locked = true;
+			case 'k':
+				keyfile = optarg;
 				break;
 			default:
 				usage();
@@ -82,9 +71,15 @@ int main(int argc, char ** argv) {
 		}
 	}
 
-	if (op == '\0') {
+	if (op == '\0' || keyfile == NULL) {
 		usage();
 		return 1;
+	}
+
+	nfc3d_keygen_masterkeys masterKeys;
+	if (!nfc3d_load_keys(&masterKeys, keyfile)) {
+		fprintf(stderr, "Could not load keys from \"%s\": %s (%d)\n", strerror(errno), errno);
+		return 5;
 	}
 
 	uint8_t original[NFC3D_AMIIBO_SIZE];
@@ -104,11 +99,11 @@ int main(int argc, char ** argv) {
 	}
 	fclose(f);
 
-	const nfc3d_keygen_masterkeys * masterKeys = KEYS[(debug ? 2 : 0) + (locked ? 1 : 0)];
+
 	if (op == 'e') {
-		nfc3d_amiibo_pack(masterKeys, original, modified);
+		nfc3d_amiibo_pack(&masterKeys, original, modified);
 	} else {
-		if (!nfc3d_amiibo_unpack(masterKeys, original, modified)) {
+		if (!nfc3d_amiibo_unpack(&masterKeys, original, modified)) {
 			fprintf(stderr, "!!! WARNING !!!: Tag signature was NOT valid\n");
 		}
 	}

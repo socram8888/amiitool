@@ -23,6 +23,9 @@
 #include "nfc3d/drbg.h"
 #include "nfc3d/keygen.h"
 #include <assert.h>
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
 
 void nfc3d_keygen_prepare_seed(const nfc3d_keygen_masterkeys * baseKeys, const uint8_t * baseSeed, uint8_t * output, size_t * outputSize) {
 	assert(baseKeys != NULL);
@@ -33,9 +36,7 @@ void nfc3d_keygen_prepare_seed(const nfc3d_keygen_masterkeys * baseKeys, const u
 	uint8_t * start = output;
 
 	// 1: Copy whole type string
-	size_t stringSize = strlen(baseKeys->typeString) + 1;
-	memcpy(output, baseKeys->typeString, stringSize);
-	output += stringSize;
+	output = stpncpy(output, baseKeys->typeString, sizeof(baseKeys->typeString)) + 1;
 
 	// 2: Append (16 - magicBytesSize) from the input seed
 	size_t leadingSeedBytes = 16 - baseKeys->magicBytesSize;
@@ -65,5 +66,25 @@ void nfc3d_keygen(const nfc3d_keygen_masterkeys * baseKeys, const uint8_t * base
 	size_t preparedSeedSize;
 
 	nfc3d_keygen_prepare_seed(baseKeys, baseSeed, preparedSeed, &preparedSeedSize);
-	nfc3d_drbg_generate_bytes(baseKeys->hmacKey, NFC3D_KEYGEN_HMAC_SIZE, preparedSeed, preparedSeedSize, (uint8_t *) derivedKeys, sizeof(*derivedKeys));
+	nfc3d_drbg_generate_bytes(baseKeys->hmacKey, sizeof(baseKeys->hmacKey), preparedSeed, preparedSeedSize, (uint8_t *) derivedKeys, sizeof(*derivedKeys));
+}
+
+bool nfc3d_load_keys(nfc3d_keygen_masterkeys * baseKeys, const char * path) {
+	FILE * f = fopen(path, "rb");
+	if (!f) {
+		return false;
+	}
+
+	if (!fread(baseKeys, sizeof(*baseKeys), 1, f)) {
+		fclose(f);
+		return false;
+	}
+	fclose(f);
+
+	if (baseKeys->magicBytesSize > 16) {
+		errno = EILSEQ;
+		return false;
+	}
+
+	return true;
 }
