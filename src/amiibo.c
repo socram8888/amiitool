@@ -61,7 +61,6 @@ void nfc3d_amiibo_tag_to_internal(const uint8_t * tag, uint8_t * intl) {
 	memcpy(intl + 0x1B4, tag + 0x034, 0x020);
 	memcpy(intl + 0x1D4, tag + 0x000, 0x008);
 	memcpy(intl + 0x1DC, tag + 0x054, 0x02C);
-	memcpy(intl + 0x208, tag + 0x208, 0x00C);
 }
 
 void nfc3d_amiibo_internal_to_tag(const uint8_t * intl, uint8_t * tag) {
@@ -72,7 +71,6 @@ void nfc3d_amiibo_internal_to_tag(const uint8_t * intl, uint8_t * tag) {
 	memcpy(tag + 0x034, intl + 0x1B4, 0x020);
 	memcpy(tag + 0x000, intl + 0x1D4, 0x008);
 	memcpy(tag + 0x054, intl + 0x1DC, 0x02C);
-	memcpy(tag + 0x208, intl + 0x208, 0x00C);
 }
 
 bool nfc3d_amiibo_unpack(const nfc3d_keygen_masterkeys * masterKeys, const uint8_t * tag, uint8_t * plain) {
