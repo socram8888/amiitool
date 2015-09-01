@@ -27,6 +27,8 @@
 #include <getopt.h>
 #include <errno.h>
 
+#define NTAG215_SIZE 540
+
 void usage() {
 	fprintf(stderr,
 		"amiitool\n"
@@ -38,6 +40,7 @@ void usage() {
 		"   -k key set file. For retail amiibo, use \"retail unfixed\" key set\n"
 		"   -i input file. If not specified, stdin will be used.\n"
 		"   -o output file. If not specified, stdout will be used.\n"
+		"   -l decrypt files with invalid signatures.\n"
 	);
 }
 
@@ -48,9 +51,10 @@ int main(int argc, char ** argv) {
 	char op = '\0';
 	bool debug = false;
 	bool locked = false;
+	bool lenient = false;
 
 	char c;
-	while ((c = getopt(argc, argv, "edi:o:k:")) != -1) {
+	while ((c = getopt(argc, argv, "edi:o:k:l")) != -1) {
 		switch (c) {
 			case 'e':
 			case 'd':
@@ -64,6 +68,9 @@ int main(int argc, char ** argv) {
 				break;
 			case 'k':
 				keyfile = optarg;
+				break;
+			case 'l':
+				lenient = true;
 				break;
 			default:
 				usage();
@@ -82,7 +89,7 @@ int main(int argc, char ** argv) {
 		return 5;
 	}
 
-	uint8_t original[NFC3D_AMIIBO_SIZE];
+	uint8_t original[NTAG215_SIZE];
 	uint8_t modified[NFC3D_AMIIBO_SIZE];
 
 	FILE * f = stdin;
@@ -93,18 +100,21 @@ int main(int argc, char ** argv) {
 			return 3;
 		}
 	}
-	if (fread(original, NFC3D_AMIIBO_SIZE, 1, f) != 1) {
+	size_t readPages = fread(original, 4, NTAG215_SIZE / 4, f);
+	if (readPages < NFC3D_AMIIBO_SIZE / 4) {
 		fprintf(stderr, "Could not read from input: %s (%d)\n", strerror(errno), errno);
 		return 3;
 	}
 	fclose(f);
-
 
 	if (op == 'e') {
 		nfc3d_amiibo_pack(&masterKeys, original, modified);
 	} else {
 		if (!nfc3d_amiibo_unpack(&masterKeys, original, modified)) {
 			fprintf(stderr, "!!! WARNING !!!: Tag signature was NOT valid\n");
+			if (!lenient) {
+				return 6;
+			}
 		}
 	}
 
@@ -119,6 +129,12 @@ int main(int argc, char ** argv) {
 	if (fwrite(modified, NFC3D_AMIIBO_SIZE, 1, f) != 1) {
 		fprintf(stderr, "Could not write to output: %s (%d)\n", strerror(errno), errno);
 		return 4;
+	}
+	if (readPages > NFC3D_AMIIBO_SIZE / 4) {
+		if (fwrite(original + NFC3D_AMIIBO_SIZE, readPages * 4 - NFC3D_AMIIBO_SIZE, 1, f) != 1) {
+			fprintf(stderr, "Could not write to output: %s (%d)\n", strerror(errno), errno);
+			return 4;
+		}
 	}
 	fclose(f);
 

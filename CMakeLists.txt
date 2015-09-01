@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.4)
-project(nfc3d)
+project(nfc3d C)
 
 include_directories(include)
 
