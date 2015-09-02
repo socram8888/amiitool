@@ -3,6 +3,10 @@ project(nfc3d C)
 
 include_directories(include)
 
+if(CMAKE_COMPILER_IS_GNUCC)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+endif()
+
 set(HEADER_FILES
 	include/nfc3d/drbg.h
 	include/nfc3d/keygen.h

@@ -49,8 +49,6 @@ int main(int argc, char ** argv) {
 	char * outfile = NULL;
 	char * keyfile = NULL;
 	char op = '\0';
-	bool debug = false;
-	bool locked = false;
 	bool lenient = false;
 
 	char c;
@@ -85,7 +83,7 @@ int main(int argc, char ** argv) {
 
 	nfc3d_keygen_masterkeys masterKeys;
 	if (!nfc3d_load_keys(&masterKeys, keyfile)) {
-		fprintf(stderr, "Could not load keys from \"%s\": %s (%d)\n", strerror(errno), errno);
+		fprintf(stderr, "Could not load keys from \"%s\": %s (%d)\n", keyfile, strerror(errno), errno);
 		return 5;
 	}
 
