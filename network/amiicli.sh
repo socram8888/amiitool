@@ -16,7 +16,6 @@ gentoken() {
 	# Time-based token
 	TICK=$(($(date -u +%s)/30))
 	echo -n "$TICK-${LOGIN:16:16}" | sha256sum | head -c16
-	echo -n "$TICK-${LOGIN:16:16}" >&2
 
 	echo "Tick: $TICK" >&2
 }
@@ -25,7 +24,6 @@ usage() {
 	echo "Usage: $0 [e|d] (input)? (output)?" >&2
 	echo >&2
 	echo "If input or output are not specified, stdin and stdout will be used" >&2
-	echo "If input if specified but output is not, output will be input with .dec appended" >&2
 	exit 1
 }
 
