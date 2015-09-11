@@ -65,7 +65,7 @@ OP=$(head -c1 | od -tx1 -An)
 case $OP in
 	\ 04)
 		log_debug "Requested decoding"
-		(echo -ne "\x04" && cat) | tee /tmp/request | ./amiitool -d -k retail_unfixed.bin 2>/dev/null
+		(echo -ne "\x04" && cat) | ./amiitool -d -k retail_unfixed.bin 2>/dev/null
 		RET=$?
 		;;
 
@@ -77,6 +77,12 @@ case $OP in
 		else
 			RET=81
 		fi
+		;;
+
+	\ 54)
+		log_debug "Requested ToS"
+		cat tos.txt
+		RET=0
 		;;
 
 	*)

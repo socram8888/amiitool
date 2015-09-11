@@ -21,7 +21,12 @@ gentoken() {
 }
 
 usage() {
-	echo "Usage: $0 [e|d] (input)? (output)?" >&2
+	echo "Usage: $0 op (input)? (output)?" >&2
+	echo >&2
+	echo "Operations:" >&2
+	echo " - d: decrypt amiibo" >&2
+	echo " - e: encrypt amiibo (*)" >&2
+	echo " - t: terms of service" >&2
 	echo >&2
 	echo "If input or output are not specified, stdin and stdout will be used" >&2
 	exit 1
@@ -80,6 +85,10 @@ case "$1" in
 
 	d)
 		cat "$INPUT" | nc $SERVER > "$OUTPUT"
+		;;
+
+	t)
+		echo -n "T" | nc $SERVER > "$OUTPUT"
 		;;
 
 	*)
