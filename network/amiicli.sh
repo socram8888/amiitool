@@ -84,7 +84,8 @@ case "$1" in
 		;;
 
 	d)
-		cat "$INPUT" | nc $SERVER > "$OUTPUT"
+		# Dumps should always start with 0x04, which is how the server for compatibily reasons detects decryption, but we'll replace first byte with it, just to be sure.
+		(echo -ne "\x04"; tail -c +2 "$INPUT") | nc $SERVER > "$OUTPUT"
 		;;
 
 	t)
