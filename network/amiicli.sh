@@ -124,7 +124,6 @@ case "$1" in
 
 		# Send operation code
 		echo -n "T" >&3
-	eval "exec ${FD}<&-"
 
 		# Read ToS
 		cat <&3 >"$OUTPUT"
