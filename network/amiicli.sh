@@ -45,12 +45,28 @@ loadapikey() {
 	echo "${AMIIBO_API_KEY}"
 }
 
-SERVER="151.80.162.73 22403"
+tcp_open() {
+	local FD="$1"
+	local HOST="$2"
+	local PORT="$3"
 
-if ! which nc &>/dev/null; then
-	echo "Netcat not detected. Please install or configure netcat and retry." >&2
-	exit 1
-fi
+	eval "exec ${FD}<>/dev/tcp/${HOST}/${PORT}"
+}
+
+tcp_close() {
+	local FD="$1"
+
+	eval "exec ${FD}<&-"
+	eval "exec ${FD}>&-"
+}
+
+open_conn() {
+	tcp_open 3 151.80.162.73 22403
+}
+
+close_conn() {
+	tcp_close 3
+}
 
 if [ $# -ge 1 -a $# -le 3 ]; then
 	INPUT=-
@@ -72,24 +88,48 @@ fi
 case "$1" in
 	e)
 		APIKEY=$(loadapikey)
-		{
-			# Operation is encryption. Note this can't overlap with decryption as dumps begin with 0x04 (NXP manufacturer code)
-			echo -n "E"
 
-			# Now write authentication token
-			gentoken "${APIKEY}" 
+		open_conn
 
-			cat "$INPUT"
-		} | nc $SERVER > "$OUTPUT"
+		# Operation is encryption. Note this can't overlap with decryption as dumps begin with 0x04 (NXP manufacturer code)
+		echo -n "E" >&3
+
+		# Now write authentication token
+		gentoken "${APIKEY}" >&3
+
+		# Send dump
+		head -c540 "$INPUT" >&3
+
+		# Read data back
+		head -c540 <&3 >"$OUTPUT"
+
+		close_conn
 		;;
 
 	d)
-		# Dumps should always start with 0x04, which is how the server for compatibily reasons detects decryption, but we'll replace first byte with it, just to be sure.
-		(echo -ne "\x04"; tail -c +2 "$INPUT") | nc $SERVER > "$OUTPUT"
+		open_conn
+
+		# Ensure it starts with 0x04.
+		echo -ne "\x04" | tee -a req >&3
+		tail -c +2 "$INPUT" | head -c539 | tee -a req  >&3
+
+		# Read decrypted form
+		head -c540 <&3 >"$OUTPUT"
+
+		close_conn
 		;;
 
 	t)
-		echo -n "T" | nc $SERVER > "$OUTPUT"
+		open_conn
+
+		# Send operation code
+		echo -n "T" >&3
+	eval "exec ${FD}<&-"
+
+		# Read ToS
+		cat <&3 >"$OUTPUT"
+
+		close_conn
 		;;
 
 	*)

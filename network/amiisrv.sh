@@ -60,23 +60,27 @@ checkauth() {
 	return 1
 }
 
+needsauth() {
+	if ! checkauth; then
+		echo -n "81"
+		exit 0
+	fi
+}
+
 OP=$(head -c1 | od -tx1 -An)
 
 case $OP in
 	\ 04)
 		log_debug "Requested decoding"
-		(echo -ne "\x04" && cat) | ./amiitool -d -k retail_unfixed.bin 2>/dev/null
+		(echo -ne "\x04" && head -c539) | ./amiitool -d -k retail_unfixed.bin 2>/dev/null
 		RET=$?
 		;;
 
 	\ 45)
 		log_debug "Requested encoding"
-		if checkauth; then
-			./amiitool -e -k retail_unfixed.bin 2>/dev/null
-			RET=$?
-		else
-			RET=81
-		fi
+		needsauth
+		head -c540 | ./amiitool -e -k retail_unfixed.bin 2>/dev/null
+		RET=$?
 		;;
 
 	\ 54)
