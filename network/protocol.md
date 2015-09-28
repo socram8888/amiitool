@@ -104,3 +104,12 @@ void calc_auth(struct auth * auth, const char apikey[32]) {
 
 For example, with API key `762D336215AFBA211A0372B1C8E0A1CF` at UNIX time 1443433695 (09:48:15 28/Sep/2015 UTC), auth would be `1762D336215AFBA21B3676B8CBF18BAC5`.
 
+Error conditions
+----------------
+
+Server may reply with error codes instead of the expected replies explained above. These error codes are always a two-byte ASCII string, which may be either of the following:
+
+ - `03`: invalid dump size
+ - `06`: invalid dump signature, when attempting to decrypt dumps that are corrupted
+ - `80`: unsupported/unknown command
+ - `81`: invalid authentication token
