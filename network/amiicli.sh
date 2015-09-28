@@ -110,8 +110,8 @@ case "$1" in
 		open_conn
 
 		# Ensure it starts with 0x04.
-		echo -ne "\x04" | tee -a req >&3
-		tail -c +2 "$INPUT" | head -c539 | tee -a req  >&3
+		echo -ne "\x04" >&3
+		tail -c +2 "$INPUT" | head -c539 >&3
 
 		# Read decrypted form
 		head -c540 <&3 >"$OUTPUT"
