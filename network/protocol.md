@@ -64,7 +64,7 @@ struct auth {
     char version;
     char userid[16];
     char token[16];
-}
+};
 ```
 
 User ID are first 16 hexadecimal characters from user's API key (in ASCII, not binary), while the remaining 16 characters are the first 16 characters of the hexadecimal representation of the SHA256 hash of current UNIX time divided by 30 followed by "-" and user's API key last 16 characters.
@@ -81,7 +81,7 @@ void to_hex(char * hex, const void * data, size_t size) {
     }
 }
 
-void calc_auth(struct auth * auth, const char apikey[32]) {
+void calc_auth(struct auth * auth, const char * apikey) {
     // Set version to 1
     auth->version = '1';
 
@@ -95,7 +95,7 @@ void calc_auth(struct auth * auth, const char apikey[32]) {
 
     // Hash it
     uint8_t hash[32];
-    EVP_Digest(tmp, now, hash, 32, EVP_sha256(), NULL);
+    EVP_Digest(tmp, len, hash, NULL, EVP_sha256(), NULL);
 
     // Now convert to hex first 8 bytes
     to_hex(auth->token, hash, 8);
