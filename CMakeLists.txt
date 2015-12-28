@@ -34,13 +34,13 @@ add_executable(zerotest ${ZEROTEST_FILES})
 target_link_libraries(zerotest crypto)
 
 #[[ TODO: fix this
-set(NINTEST_FILES
-	${TEST_FILES}
-	src/nintest.c
-)
-add_executable(nintest ${NINTEST_FILES})
-target_link_libraries(nintest crypto)
-]]
+#set(NINTEST_FILES
+#	${TEST_FILES}
+#	src/nintest.c
+#)
+#add_executable(nintest ${NINTEST_FILES})
+#target_link_libraries(nintest crypto)
+#]]
 
 set(AMIITOOL_FILES
 	${TEST_FILES}
