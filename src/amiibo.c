@@ -41,7 +41,7 @@ void nfc3d_amiibo_keygen(const nfc3d_keygen_masterkeys * masterKeys, const uint8
 }
 
 void nfc3d_amiibo_cipher(const nfc3d_keygen_derivedkeys * keys, const uint8_t * in, uint8_t * out) {
-	aes128ctr(in + 0x02C, out + 0x02C, 0x1A0, keys->aesKey, keys->aesIV);
+	aes128ctr(in + 0x02C, out + 0x02C, 0x188, keys->aesKey, keys->aesIV);
 
 	memcpy(out + 0x000, in + 0x000, 0x008);
 	// Signature NOT copied
