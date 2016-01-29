@@ -27,7 +27,7 @@
 #include <string.h>
 #include <errno.h>
 
-void nfc3d_keygen_prepare_seed(const nfc3d_keygen_masterkeys * baseKeys, const uint8_t * baseSeed, uint8_t * output, size_t * outputSize) {
+void nfc3d_keygen_prepare_seed(const nfc3d_keygen_masterkey * baseKeys, const uint8_t * baseSeed, uint8_t * output, size_t * outputSize) {
 	assert(baseKeys != NULL);
 	assert(baseSeed != NULL);
 	assert(output != NULL);
@@ -61,7 +61,7 @@ void nfc3d_keygen_prepare_seed(const nfc3d_keygen_masterkeys * baseKeys, const u
 	*outputSize = output - start;
 }
 
-void nfc3d_keygen(const nfc3d_keygen_masterkeys * baseKeys, const uint8_t * baseSeed, nfc3d_keygen_derivedkeys * derivedKeys) {
+void nfc3d_keygen(const nfc3d_keygen_masterkey * baseKeys, const uint8_t * baseSeed, nfc3d_keygen_derivedkeys * derivedKeys) {
 	uint8_t preparedSeed[NFC3D_DRBG_MAX_SEED_SIZE];
 	size_t preparedSeedSize;
 
@@ -81,7 +81,7 @@ bool nfc3d_load_keys(nfc3d_keygen_masterkeys * baseKeys, const char * path) {
 	}
 	fclose(f);
 
-	if (baseKeys->magicBytesSize > 16) {
+	if ((baseKeys->keys[0].magicBytesSize > 16) || (baseKeys->keys[1].magicBytesSize > 16)){
 		errno = EILSEQ;
 		return false;
 	}

@@ -36,6 +36,10 @@ typedef struct {
 	uint8_t magicBytesSize;
 	uint8_t magicBytes[16];
 	uint8_t xorPad[32];
+} nfc3d_keygen_masterkey;
+
+typedef struct {
+	nfc3d_keygen_masterkey keys[2];
 } nfc3d_keygen_masterkeys;
 
 typedef struct {
@@ -45,7 +49,7 @@ typedef struct {
 } nfc3d_keygen_derivedkeys;
 #pragma pack()
 
-void nfc3d_keygen(const nfc3d_keygen_masterkeys * baseKeys, const uint8_t * baseSeed, nfc3d_keygen_derivedkeys * derivedKeys);
+void nfc3d_keygen(const nfc3d_keygen_masterkey * baseKeys, const uint8_t * baseSeed, nfc3d_keygen_derivedkeys * derivedKeys);
 bool nfc3d_load_keys(nfc3d_keygen_masterkeys * baseKeys, const char * path);
 
 #endif

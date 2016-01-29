@@ -30,6 +30,6 @@
 #define NFC3D_AMIIBO_SIZE 520
 
 bool nfc3d_amiibo_unpack(const nfc3d_keygen_masterkeys * masterKeys, const uint8_t * tag, uint8_t * plain);
-void nfc3d_amiibo_pack(const nfc3d_keygen_masterkeys * masterKeys, const uint8_t * plain, uint8_t * tag);
+void nfc3d_amiibo_pack(const nfc3d_keygen_masterkeys * masterKeys, uint8_t * plain, uint8_t * tag);
 
 #endif
