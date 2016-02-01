@@ -22,6 +22,7 @@
 
 #include "nfc3d/drbg.h"
 #include "nfc3d/keygen.h"
+#include "util.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>

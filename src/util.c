@@ -57,3 +57,25 @@ void printhex(void * data, size_t size) {
 		printf("\n");
 	}
 }
+
+#ifndef stpncpy
+char * stpncpy (char *dst, const char *src, size_t count)
+{
+	char *ret = NULL;
+
+	while (count > 0)
+	{
+		--count;
+		if ((*dst++ = *src++) == '\0')
+		{
+			ret = dst - 1;
+			break;
+		}
+	}
+
+	while (count-- > 0)
+		*dst++ = '\0';
+	
+	return ret ? ret : dst;
+}
+#endif
