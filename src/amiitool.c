@@ -81,8 +81,8 @@ int main(int argc, char ** argv) {
 		return 1;
 	}
 
-	nfc3d_keygen_masterkeys masterKeys;
-	if (!nfc3d_load_keys(&masterKeys, keyfile)) {
+	nfc3d_amiibo_keys amiiboKeys;
+	if (!nfc3d_amiibo_load_keys(&amiiboKeys, keyfile)) {
 		fprintf(stderr, "Could not load keys from \"%s\": %s (%d)\n", keyfile, strerror(errno), errno);
 		return 5;
 	}
@@ -106,9 +106,9 @@ int main(int argc, char ** argv) {
 	fclose(f);
 
 	if (op == 'e') {
-		nfc3d_amiibo_pack(&masterKeys, original, modified);
+		nfc3d_amiibo_pack(&amiiboKeys, original, modified);
 	} else {
-		if (!nfc3d_amiibo_unpack(&masterKeys, original, modified)) {
+		if (!nfc3d_amiibo_unpack(&amiiboKeys, original, modified)) {
 			fprintf(stderr, "!!! WARNING !!!: Tag signature was NOT valid\n");
 			if (!lenient) {
 				return 6;
