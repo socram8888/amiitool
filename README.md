@@ -2,10 +2,6 @@ amiitool
 ========
 amiibo™ encryption/decryption tool
 
-Note to networked-mode users
-============================
-Old network mode has been replaced by a new mechanism based on HTTP, an open and well-tested standard. For more information on the deprecation of the old service check the [deprecation notice](https://github.com/socram8888/amiitool/blob/master/network/DEPRECATED.md).
-
 Usage
 =====
 **amiitool expects a binary dump. It will not work with XMLs or hexadecimal text files**. Aside from this, amiitool is very easy to use and has a very simple syntax.
