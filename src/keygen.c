@@ -36,7 +36,7 @@ void nfc3d_keygen_prepare_seed(const nfc3d_keygen_masterkeys * baseKeys, const u
 	uint8_t * start = output;
 
 	// 1: Copy whole type string
-	output = (uint8_t *) stpncpy((char *) output, baseKeys->typeString, sizeof(baseKeys->typeString)) + 1;
+	output = memccpy(output, baseKeys->typeString, '\0', sizeof(baseKeys->typeString));
 
 	// 2: Append (16 - magicBytesSize) from the input seed
 	size_t leadingSeedBytes = 16 - baseKeys->magicBytesSize;
