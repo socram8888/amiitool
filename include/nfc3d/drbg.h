@@ -25,13 +25,13 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <openssl/hmac.h>
+#include "mbedtls/md.h"
 
 #define NFC3D_DRBG_MAX_SEED_SIZE	480	/* Hardcoded max size in 3DS NFC module */
 #define NFC3D_DRBG_OUTPUT_SIZE		32	/* Every iteration generates 32 bytes */
 
 typedef struct {
-	HMAC_CTX hmacCtx;
+	mbedtls_md_context_t hmacCtx;
 	bool used;
 	uint16_t iteration;
 
