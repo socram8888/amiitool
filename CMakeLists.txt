@@ -7,6 +7,15 @@ if(CMAKE_COMPILER_IS_GNUCC)
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -fsigned-char")
 endif()
 
+set(MBEDTLS_FILES
+	src/mbedtls/aes.c
+	src/mbedtls/md.c
+	src/mbedtls/md_wrap.c
+	src/mbedtls/sha256.c
+)
+
+add_library(mbedtls ${MBEDTLS_FILES})
+
 set(HEADER_FILES
 	include/nfc3d/drbg.h
 	include/nfc3d/keygen.h
@@ -31,20 +40,11 @@ set(ZEROTEST_FILES
 	src/zerotest.c
 )
 add_executable(zerotest ${ZEROTEST_FILES})
-target_link_libraries(zerotest crypto)
-
-#[[ TODO: fix this
-#set(NINTEST_FILES
-#	${TEST_FILES}
-#	src/nintest.c
-#)
-#add_executable(nintest ${NINTEST_FILES})
-#target_link_libraries(nintest crypto)
-#]]
+target_link_libraries(zerotest mbedtls)
 
 set(AMIITOOL_FILES
 	${TEST_FILES}
 	src/amiitool.c
 )
 add_executable(amiitool ${AMIITOOL_FILES})
-target_link_libraries(amiitool crypto)
+target_link_libraries(amiitool mbedtls)
