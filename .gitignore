@@ -1,13 +1,12 @@
 # Ignore gedit backups
 *~
 
-# Ignore hidden files, except for gitignore
+# Ignore hidden files, except for git files
 .*
 !.gitignore
+!.gitmodules
 
 # Ignore binaries
-/build
-/build-mingw32
-
-# Ignore copyrighted files
-/key
+*.o
+/amiitool
+/amiitool.exe
