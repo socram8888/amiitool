@@ -9,9 +9,8 @@
 
 #include <stdint.h>
 
-const char * nfc3d_version();
-uint32_t nfc3d_version_code();
-uint32_t nfc3d_commit_id();
-uint32_t nfc3d_commit_count();
+const char * nfc3d_version_fork();
+uint32_t nfc3d_version_build();
+uint32_t nfc3d_version_commit();
 
 #endif
