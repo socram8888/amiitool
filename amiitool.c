@@ -14,22 +14,27 @@
 
 #define NTAG215_SIZE 540
 
+static char * self;
+
 void usage() {
 	fprintf(stderr,
 		"amiitool\n"
-		"by Marcos Vives Del Sol <socram@protonmail.ch>\n"
+		"by Marcos Del Sol Vives <marcos@dracon.es>\n"
 		"\n"
-		"Usage: amiitool (-e|-d) -k keyfile [-i input] [-o output]\n"
+		"Usage: %s (-e|-d) -k keyfile [-i input] [-o output]\n"
 		"   -e encrypt and sign amiibo\n"
 		"   -d decrypt and test amiibo\n"
 		"   -k key set file. For retail amiibo, use \"retail unfixed\" key set\n"
 		"   -i input file. If not specified, stdin will be used.\n"
 		"   -o output file. If not specified, stdout will be used.\n"
-		"   -l decrypt files with invalid signatures.\n"
+		"   -l decrypt files with invalid signatures.\n",
+		self
 	);
 }
 
 int main(int argc, char ** argv) {
+	self = argv[0];
+
 	char * infile = NULL;
 	char * outfile = NULL;
 	char * keyfile = NULL;
