@@ -10,3 +10,6 @@
 *.o
 /amiitool
 /amiitool.exe
+
+# Ignore version files
+/gitversion.h

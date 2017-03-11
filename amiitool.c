@@ -5,7 +5,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-#include "nfc3d/amiibo.h"
+#include <nfc3d/amiibo.h>
+#include <nfc3d/version.h>
 #include "util.h"
 #include <stdio.h>
 #include <string.h>
@@ -18,7 +19,7 @@ static char * self;
 
 void usage() {
 	fprintf(stderr,
-		"amiitool\n"
+		"amiitool v%s (commit %08x)\n"
 		"by Marcos Del Sol Vives <marcos@dracon.es>\n"
 		"\n"
 		"Usage: %s (-e|-d) -k keyfile [-i input] [-o output]\n"
@@ -28,7 +29,7 @@ void usage() {
 		"   -i input file. If not specified, stdin will be used.\n"
 		"   -o output file. If not specified, stdout will be used.\n"
 		"   -l decrypt files with invalid signatures.\n",
-		self
+		nfc3d_version(), nfc3d_commit_id(), self
 	);
 }
 

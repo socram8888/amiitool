@@ -23,7 +23,7 @@ MBEDTLS_DIR = $(PWD)/mbedtls
 MBEDTLS_CONFIG = $(PWD)/configs/mbedtls.h
 MBEDTLS_CFLAGS = -DMBEDTLS_CONFIG_FILE='\"$(MBEDTLS_CONFIG)\"' $(CFLAGS)
 
-HEADERS := $(wildcard *.h)
+HEADERS := $(wildcard *.h) gitversion.h
 OBJECTS := $(patsubst %.c,%.o,$(wildcard *.c))
 LIBSOBJ := $(filter-out $(BINS:%=%.o),$(OBJECTS))
 
@@ -45,6 +45,10 @@ all: $(BINS)
 %.o: %.c $(HEADERS)
 	$(CC) $(ALL_CFLAGS) -c $< -o $@
 
+gitversion.h:
+	echo "#define GIT_COMMIT_ID 0x`git rev-parse HEAD | head -c8`" > $(PWD)/gitversion.h
+	echo "#define GIT_COMMIT_COUNT `git rev-list --count --all`" >> $(PWD)/gitversion.h
+
 # Static mbed TLS
 mbedtls: $(MBEDTLS_CONFIG)
 	"$(MAKE)" lib -C $(MBEDTLS_DIR) CFLAGS="$(MBEDTLS_CFLAGS)"
@@ -54,7 +58,7 @@ clean: mostlyclean
 	$(MAKE) -C $(MBEDTLS_DIR) clean
 
 mostlyclean:
-	$(RM) $(OBJECTS) $(BINS)
+	$(RM) $(OBJECTS) $(BINS) gitversion.h
 
 # Install
 install: $(BINS:%=install_%)
