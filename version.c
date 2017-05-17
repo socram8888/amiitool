@@ -10,7 +10,7 @@
 
 const char * nfc3d_version_fork() {
 	// TODO: maybe this should go in another file?
-	return "ynsta";
+	return "socram";
 }
 
 uint32_t nfc3d_version_commit() {
