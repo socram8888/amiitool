@@ -39,7 +39,7 @@ int main(int argc, char ** argv) {
 	self = argv[0];
 
 	char * infile = NULL;
-        char * savefile = NULL;
+	char * savefile = NULL;
 	char * outfile = NULL;
 	char * keyfile = NULL;
 	char op = '\0';
@@ -144,7 +144,7 @@ int main(int argc, char ** argv) {
 			}
 		}
 
-		nfc3d_amiibo_copy_app_data(plain_base, plain_save);
+		nfc3d_amiibo_copy_app_data(plain_save, plain_base);
 		nfc3d_amiibo_pack(&amiiboKeys, plain_base, modified);
 	}
 

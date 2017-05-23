@@ -158,23 +158,22 @@ bool nfc3d_amiibo_load_keys(nfc3d_amiibo_keys * amiiboKeys, const char * path) {
 }
 
 
-void nfc3d_amiibo_copy_app_data(uint8_t * dst, const uint8_t * src) {
+void nfc3d_amiibo_copy_app_data(const uint8_t * src, uint8_t * dst) {
 
-    uint16_t *ami_nb_wr = (uint16_t*)(dst + 0x29);
-    uint16_t *cfg_nb_wr = (uint16_t*)(dst + 0xB4);
+	uint16_t *ami_nb_wr = (uint16_t*)(dst + 0x29);
+	uint16_t *cfg_nb_wr = (uint16_t*)(dst + 0xB4);
 
-    /* increment write counters */
-    *ami_nb_wr = htobe16(be16toh(*ami_nb_wr) + 1);
-    *cfg_nb_wr = htobe16(be16toh(*cfg_nb_wr) + 1);
+	/* increment write counters */
+	*ami_nb_wr = htobe16(be16toh(*ami_nb_wr) + 1);
+	*cfg_nb_wr = htobe16(be16toh(*cfg_nb_wr) + 1);
 
-    /* copy flags */
-    dst[0x2C] = src[0x2C];
-    /* copy programID */
-    memcpy(dst + 0xAC, src + 0xAC, 8);
-    /* copy AppID */
-    memcpy(dst + 0xB6, src + 0xB6, 4);
-
-    /* copy AppData */
-    memcpy(dst + 0xDC, src + 0xDC, 216);
-
+	/* copy flags */
+	dst[0x2C] = src[0x2C];
+	/* copy programID */
+	memcpy(dst + 0xAC, src + 0xAC, 8);
+	/* copy AppID */
+	memcpy(dst + 0xB6, src + 0xB6, 4);
+	/* copy AppData */
+	memcpy(dst + 0xDC, src + 0xDC, 216);
 }
+
