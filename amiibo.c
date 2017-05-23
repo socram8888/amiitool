@@ -10,7 +10,7 @@
 #include "mbedtls/md.h"
 #include "mbedtls/aes.h"
 #include <errno.h>
-#include <endian.h>
+#include "portable_endian.h"
 
 
 #define HMAC_POS_DATA 0x008
