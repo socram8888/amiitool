@@ -1,4 +1,7 @@
 
+# Project directory
+PWD ?= "`pwd`"
+
 # Executable
 BINS = amiitool
 STATICLIBS = mbedtls
