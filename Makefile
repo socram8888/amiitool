@@ -4,12 +4,10 @@ PWD ?= "`pwd`"
 
 # Executable
 BINS = amiitool
-STATICLIBS = mbedtls
 
 # Compilation flags
-CFLAGS ?= -Wall -pedantic -O2 -fsigned-char
-ALL_CFLAGS = -I $(PWD)/include -I $(MBEDTLS_DIR)/include $(CFLAGS)
-LDFLAGS = -L $(MBEDTLS_DIR)/library -l mbedcrypto
+CFLAGS ?= -fpic -fPIC -Wall -pedantic -O2 -fsigned-char
+LDFLAGS = -L. -l nfc3d
 
 # Commands
 INSTALL = /usr/bin/install -D
@@ -22,8 +20,7 @@ exec_prefix = $(prefix)
 bindir = $(exec_prefix)/bin
 
 # mbed TLS libraries
-MBEDTLS_DIR = $(PWD)/mbedtls
-MBEDTLS_CONFIG = $(PWD)/configs/mbedtls.h
+MBEDTLS_CONFIG ?= $(realpath configs/mbedtls.h)
 MBEDTLS_CFLAGS = -DMBEDTLS_CONFIG_FILE='\"$(MBEDTLS_CONFIG)\"' $(CFLAGS)
 
 HEADERS := $(wildcard *.h) gitversion.h
@@ -36,29 +33,32 @@ LIBSOBJ := $(filter-out $(BINS:%=%.o),$(OBJECTS))
 # Keep objects to speed up recompilation
 .PRECIOUS: %.o
 
-# Always execute Makefiles for static libraries
-.PHONY: $(STATICLIBS)
+# Always execute Makefiles for mbedtls
+.PHONY: mbedtls/library/libmbedtls.a
 
 # Default target: compile all programs
-all: $(BINS)
+all: libnfc3d.so $(BINS)
 
-%: %.o $(LIBSOBJ) $(STATICLIBS)
-	$(CC) $(ALL_CFLAGS) $(LIBSOBJ) $< -o $@ $(LDFLAGS)
+libnfc3d.so: $(LIBSOBJ) mbedtls/library/libmbedtls.a
+	$(CC) -shared -I include -I mbedtls/include $(LIBSOBJ) -o $@ -L mbedtls/library -l mbedcrypto
+
+%: %.o libnfc3d.so
+	$(CC) -I include $(CFLAGS) $< -o $@ $(LDFLAGS)
 
 %.o: %.c $(HEADERS)
-	$(CC) $(ALL_CFLAGS) -c $< -o $@
+	$(CC) -I include -I mbedtls/include $(CFLAGS) -c $< -o $@
 
 gitversion.h:
 	echo "#define GIT_COMMIT_ID 0x`git rev-parse HEAD | head -c8`" > $(PWD)/gitversion.h
 	echo "#define GIT_COMMIT_COUNT `git rev-list --count --all`" >> $(PWD)/gitversion.h
 
 # Static mbed TLS
-mbedtls: $(MBEDTLS_CONFIG)
-	"$(MAKE)" lib -C $(MBEDTLS_DIR) CFLAGS="$(MBEDTLS_CFLAGS)"
+mbedtls/library/libmbedtls.a: $(MBEDTLS_CONFIG)
+	"$(MAKE)" lib -C mbedtls/ CFLAGS="$(MBEDTLS_CFLAGS)"
 
 # Clean targets
 clean: mostlyclean
-	$(MAKE) -C $(MBEDTLS_DIR) clean
+	$(MAKE) -C mbedtls/ clean
 
 mostlyclean:
 	$(RM) $(OBJECTS) $(BINS) gitversion.h
